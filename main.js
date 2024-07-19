@@ -1,4 +1,25 @@
 import './style.css'
 import boyerMoore from './src/boyer-moore.js'
+import naive from './src/naive.js';
 
-console.log(boyerMoore("TEST-STRING-PATTERN-STRING", "STRING"));
+async function doSearch() {
+    fetch('./src/tosearch.txt').then((x) => x.text()).then((text) => {
+        const search = "Potter";
+
+        let start = Date.now();
+        let result = boyerMoore(text, search);
+        let elapsed = Date.now() - start;
+
+        console.log(result.length + " instances of '" + search + "' found.")
+        console.log("Boyer-Moore (ms): " + elapsed);
+
+        start = Date.now();
+        result = naive(text, search);
+        elapsed = Date.now() - start;
+
+        console.log(result.length + " instances of '" + search + "' found.")
+        console.log("Naive (ms): " + elapsed);
+    });
+}
+    
+doSearch();
