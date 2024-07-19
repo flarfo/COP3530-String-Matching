@@ -4,7 +4,8 @@
 const NUM_CHARS = 256; // assuming ASCII, can be changed to 26 for alphabetic strings
 
 // string s, string pattern
-export default function boyerMoore(s, pattern) {
+// TODO: add case matching
+export default function boyerMoore(s, pattern, matchCase = true) {
 
     // PREPROCESSING
     const patternSize = pattern.length;
@@ -22,17 +23,18 @@ export default function boyerMoore(s, pattern) {
 
     // else, t[char] = pattern_length - j (where j is the max integer s.t. pattern[j] = char)
     for (let i = 0; i < patternSize; i++) {
-        badCharTable[pattern.charCodeAt(i)] = Math.max(1, patternSize - i - 1);
+        badCharTable[pattern.charCodeAt(i)] =  Math.max(1, patternSize - i - 1);
     }
 
     /* 
-    generate a shift table (map) to represent the given pattern
+    generate a shift table to represent the given pattern
     key: substring index in pattern
     value: number of skips to make upon mismatch at given index 
     */
     const shiftTable = [];
 
     for (let i = 0; i < patternSize; i++) {
+        //console.log(pattern.charAt(i) + ": " + Math.max(1, patternSize - i - 1));
         shiftTable[i] = Math.max(1, patternSize - i - 1);
     }
 
@@ -43,35 +45,37 @@ export default function boyerMoore(s, pattern) {
 
     let i = patternSize - 1;
 
+    //let count = 0;
     // if pattern greather than source, pattern cannot exist in source
     while (i < s.length) {
+        //if (count == 10000) break;
         let j = patternSize - 1;
-
+        let pos = i;
         while (j >= 0) {
-            console.log("i: " + s.charAt(i) + ", j: " + pattern.charAt(j))
-            if (s.charAt(i) == pattern.charAt(j)) {
-                console.log("match");
-                j -= 1;
+            //console.log("i: " + s.charAt(pos) + ", j: " + pattern.charAt(j))
+            if (s.charAt(pos) == pattern.charAt(j)) {
+                //console.log("match"); 
 
                 if (j == 0) {
-                    result.push(i - 1)
-                    console.log("added");
+                    result.push(pos);
+                    //console.log("added");
                     break;
                 }
-
-                i -= 1;
+                
+                j -= 1;
+                pos -= 1;
                 continue;
             }
-            console.log("no match");
+            //console.log("no match");
             break;
         }
 
-        const shift = Math.max(badCharTable[s.charCodeAt(i)], shiftTable[j]);
+        i += Math.max(badCharTable[s.charCodeAt(i)], shiftTable[j]);
         
-        console.log(shift + " bad: " + badCharTable[s.charCodeAt(i)] + ", shift: " + shiftTable[j]);
-        i += shift;
-        console.log("j = " + j);
-        console.log("i = " + i);
+        //console.log(shift + " bad: " + badCharTable[s.charCodeAt(i)] + ", shift: " + shiftTable[j]);
+        //console.log("j = " + j);
+        //console.log("i: " + i);
+        //count++;
     }
     
     return result;
