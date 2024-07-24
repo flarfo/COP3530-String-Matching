@@ -1,0 +1,63 @@
+/* use fire code monospace font */
+
+.left-split {
+  height: 100%;
+  width: 15%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #181818;
+  box-shadow: 0 0 5px #2b2b2b;
+  overflow-x: hidden;
+  z-index: 1;
+}
+
+.right-split {
+  height: 100%;
+  width: 85%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #1f1f1f;
+  overflow-x: hidden;
+}
+
+.page-container {
+  user-select: none;
+  overflow: hidden;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 2%;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  background-color: #181818;
+  box-shadow: 0 0 4px #2b2b2b;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+
+.page-container button {
+  background-color: transparent;
+  border: none;
+}
+
+.page-container button:disabled i {
+  color: #aaadc7;
+}
+
+.pagination i:hover:not(.selected) {
+  background-color: #2b2b2b;
+}
+
+.pagination i {
+  color: #ebece9;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+
+.pagination i.selected {
+  background-color: #2b2b2b;
+}

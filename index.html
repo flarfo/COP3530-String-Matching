@@ -2,12 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/main.js"></script>
+
+    <div class="left-split">
+    </div>
+
+    <div class="right-split">
+      <div class="page-container">
+        <button class="first-page" disabled>
+          <strong>&lt;&lt;</strong>
+        </button>
+        <button class="prev-page" disabled>
+          <strong>&lt;</strong>
+        </button>
+        <div class="pagination">
+          <button>
+            <i class="selected">1</i>
+          </button>
+          <button>
+            <i>2</i>
+          </button>
+          <button>
+            <i>3</i>
+          </button>
+          <button>
+            <i>4</i>
+          </button>
+          <button>
+            <i>5</i>
+          </button>
+        </div>
+        <button class="next-page">
+          <strong>></strong>
+        </button>
+        <button class="last-page">
+          <strong>>></strong>
+        </button>
+      </div>
+    </div>
+    <script type="module" src="src/index.js"></script>
   </body>
 </html>
