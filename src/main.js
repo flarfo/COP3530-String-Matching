@@ -1,6 +1,6 @@
 import './style.css'
-import boyerMoore from './src/boyer-moore.js'
-import naive from './src/naive.js';
+import boyerMoore from './algorithms/boyer-moore.js'
+import naive from './algorithms/naive.js';
 
 async function doSearch() {
     fetch('./src/tosearch.txt').then((x) => x.text()).then((text) => {
@@ -22,4 +22,4 @@ async function doSearch() {
     });
 }
     
-doSearch();
+// doSearch();
