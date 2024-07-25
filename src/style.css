@@ -42,6 +42,7 @@
 .page-container button {
   background-color: transparent;
   border: none;
+  cursor: pointer;
 }
 
 .page-container button:disabled i {
