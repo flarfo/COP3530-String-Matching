@@ -8,6 +8,7 @@ const pageData = {
     charsPerPage: 2000 
 };
 
+const textContainer = document.getElementById('text-container');
 const inputFile = document.getElementById('input-file');
 const inputForm = document.getElementById('input-form');
 
@@ -17,7 +18,8 @@ inputForm.addEventListener('submit', e => {
     // read text from uploaded file
     const fileReader = new FileReader();
     fileReader.onload = () => {
-        doSearch(fileReader.result, 'text');
+        textContainer.textContent = fileReader.result;
+        doSearch(fileReader.result, 'a');
     };
 
     fileReader.readAsText(inputFile.files[0]);
@@ -31,12 +33,19 @@ function doSearch(text, search) {
     console.log(result.length + " instances of '" + search + "' found.")
     console.log("Boyer-Moore (ms): " + elapsed);
 
-    start = Date.now();
-    result = naive(text, search);
-    elapsed = Date.now() - start;
+    // do text highlighting
 
-    console.log(result.length + " instances of '" + search + "' found.")
-    console.log("Naive (ms): " + elapsed);
+    
+    let innerHTML = "";
+    let pos = 0;
+
+    for (let i = 0; i < result.length; i++) {
+        innerHTML += text.substring(pos, result[i]) + "<span style='color:yellow'>" + search + '</span>';
+        pos = result[i] + search.length;
+    }
+
+    innerHTML += text.substring(pos);
+    textContainer.innerHTML = innerHTML;
 }
 
 // old async method for local files
