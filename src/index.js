@@ -12,7 +12,7 @@ const textContainer = document.getElementById('text-container');
 const inputFile = document.getElementById('input-file');
 const inputForm = document.getElementById('input-form');
 
-inputForm.addEventListener('submit', e => {
+inputForm.addEventListener('change', e => {
     e.preventDefault();
 
     // read text from uploaded file
@@ -47,6 +47,15 @@ function doSearch(text, search) {
     innerHTML += text.substring(pos);
     textContainer.innerHTML = innerHTML;
 }
+
+const editableDiv = document.querySelector('div[contenteditable="true"]');
+
+// solution from: https://stackoverflow.com/questions/6899659/remove-formatting-from-a-contenteditable-div
+editableDiv.addEventListener("paste", function(e) {
+  e.preventDefault();
+  var text = e.clipboardData.getData("text/plain");
+  document.execCommand("insertHTML", false, text);
+});
 
 // old async method for local files
 /*async function doSearch(file) {
