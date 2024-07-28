@@ -8,9 +8,14 @@ const pageData = {
     charsPerPage: 2000 
 };
 
+const content = [];
+
 const textContainer = document.getElementById('text-container');
 const inputFile = document.getElementById('input-file');
 const inputForm = document.getElementById('input-form');
+
+// TODO: actually calculate width, especially if a fallback font is needed
+const fontWidth = 10;
 
 inputForm.addEventListener('change', e => {
     e.preventDefault();
@@ -33,9 +38,38 @@ function doSearch(text, search) {
     console.log(result.length + " instances of '" + search + "' found.")
     console.log("Boyer-Moore (ms): " + elapsed);
 
-    // do text highlighting
+    // append text overflow to next "page"
+    let overflow = textContainer.clientHeight < textContainer.scrollHeight;
+    console.log('Overflow: ' + overflow);
+    console.log('Client Height: ' + textContainer.clientHeight);
+    console.log('Scroll Height: ' + textContainer.scrollHeight);
 
+    // TODO: update on screen size change (zoom/resize)
+
+    // update content division based on text overflow amount
     
+    // calculate max lines possible to display in text div based on current zoom
+    // divide height of div by line height, (* window.devicePixelRatio to account for zoom)
+    const maxLines = Math.floor(window.devicePixelRatio * (textContainer.clientHeight - 20) / (Number.parseFloat(window.getComputedStyle(textContainer).fontSize) * 1.2 * window.devicePixelRatio));
+
+    // number of lines not displayed due to too much text
+    const overflowAmount = Math.floor(window.devicePixelRatio * (textContainer.scrollHeight - 20) / (Number.parseFloat(window.getComputedStyle(textContainer).fontSize) * 1.2 * window.devicePixelRatio)) - maxLines;
+
+    console.log('Overflow Amount: ' + overflowAmount);
+    console.log('Max Lines: '  + maxLines);
+
+    console.log('Div Width: ' + textContainer.clientWidth * window.devicePixelRatio);
+    const maxChars = window.devicePixelRatio * textContainer.clientWidth / fontWidth;
+    console.log('Max Chars: ' + maxChars);
+
+    let curText = text;
+    /*while (overflow) {
+        overflow = textContainer.clientHeight < textContainer.scrollHeight;
+        // set curText
+        // append curText to content[]
+    }*/
+
+    // do text highlighting
     let innerHTML = "";
     let pos = 0;
 
@@ -57,26 +91,6 @@ editableDiv.addEventListener("paste", function(e) {
   document.execCommand("insertHTML", false, text);
 });
 
-// old async method for local files
-/*async function doSearch(file) {
-    fetch(file).then((x) => x.text()).then((text) => {
-        const search = "Copy";
-        console.log(text);
-        let start = Date.now();
-        let result = boyerMoore(text, search);
-        let elapsed = Date.now() - start;
-
-        console.log(result.length + " instances of '" + search + "' found.")
-        console.log("Boyer-Moore (ms): " + elapsed);
-
-        start = Date.now();
-        result = naive(text, search);
-        elapsed = Date.now() - start;
-
-        console.log(result.length + " instances of '" + search + "' found.")
-        console.log("Naive (ms): " + elapsed);
-    });
-}*/
 
 // "tosearch.txt" will be split into (totalPages) strings (content[]), based on charsPerPage
 // then dynamically add (totalPages) buttons to pagination div
