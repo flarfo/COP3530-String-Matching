@@ -84,6 +84,7 @@ input[type="file"] {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  z-index: 2;
 }
 
 .page-container button:disabled i {
@@ -111,5 +112,5 @@ input[type="file"] {
   padding: 20px 20px 0px 20px;
   height: 100%;
   display: block;
-  word-break: break-all;
+  word-break: break-word;
 }
