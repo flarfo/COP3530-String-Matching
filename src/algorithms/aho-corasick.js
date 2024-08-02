@@ -3,10 +3,6 @@
 // Bertrand Meyer: Incremental String Matching (1985)
 // https://www.geeksforgeeks.org/aho-corasick-algorithm-pattern-searching/
 
-// First, import fs module for file system stuff
-const fs = require('fs');
-// Next, import path module for handling file paths
-const path = require('path')
 
 // Trie class
 // represents a node in the Trie
@@ -64,7 +60,7 @@ class AhoCorasick {
                 }
 
                 // set the failure link to matching child or root
-                if (FailureNode) {
+                if (failureNode) {
                     child.failureLink = failureNode.children[char];
                 } else {
                     child.failureLink = root;
@@ -110,6 +106,9 @@ class AhoCorasick {
         return results; // return list of matches
     }
 }
+
+// Export ahocorasick class as ES module
+export default AhoCorasick;
 
 
 // To do:
