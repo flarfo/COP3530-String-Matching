@@ -2,6 +2,8 @@ import './style.css'
 import boyerMoore from './algorithms/boyer-moore.js'
 import naive from './algorithms/naive.js';
 
+sessionStorage.clear(); 
+
 const pageData = {
     curPage: 0, // 0 indexed
     totalPages: 0, // 0 indexed
@@ -10,13 +12,37 @@ const pageData = {
 
 const content = [];
 let searchResult = [];
+let searchText;
+
+let visualization = false;
+const visualizationToggle = document.getElementById('visualization-toggle');
+visualizationToggle.addEventListener('click', e => {
+    e.preventDefault();
+    visualization = !visualization;
+    if (visualization) {
+        visualizationToggle.style.backgroundColor = '#438a55';
+    }
+    else {
+         visualizationToggle.style.backgroundColor = '#f85149';
+    }
+});
 
 const searchButton = document.getElementById('search-button');
+const searchInputField = document.getElementById('search-input-field');
 searchButton.addEventListener('click', e => {
     e.preventDefault();
 
-    // TODO: make able to search for specified word
+    if (searchInputField.value == '') return;
+    
+    doSearch(searchText, searchInputField.value);
 });
+
+const firstButton = document.getElementById('first-page');
+firstButton.addEventListener('click', e => {
+    e.preventDefault();
+
+    displayText(0);
+})
 
 const prevButton = document.getElementById('prev-page');
 prevButton.addEventListener('click', e => {
@@ -32,6 +58,13 @@ nextButton.addEventListener('click', e => {
     displayText(pageData.curPage + 1);
 });
 
+const lastButton = document.getElementById('last-page');
+lastButton.addEventListener('click', e => {
+    e.preventDefault();
+
+    displayText(pageData.totalPages);
+})
+
 const textContainer = document.getElementById('text-container');
 const inputFile = document.getElementById('input-file');
 const inputForm = document.getElementById('input-form');
@@ -39,24 +72,30 @@ const inputForm = document.getElementById('input-form');
 // TODO: actually calculate width, especially if a fallback font is needed
 const fontWidth = 10;
 
+const fileReader = new FileReader();
 inputForm.addEventListener('change', e => {
     e.preventDefault();
 
     // read text from uploaded file
-    const fileReader = new FileReader();
+    
     fileReader.onload = () => {
-        textContainer.textContent = fileReader.result;
-        doSearch(fileReader.result, 'still');
+        //content.length = 0;
+
+        let text = fileReader.result;
+        text = text.replace(/[^\x00-\x7F]/g, "");
+        searchText = text;
+        calculatePageDisplay(text, '', false);
+        displayText(0);
     };
 
     fileReader.readAsText(inputFile.files[0]);
 });
 
-function doSearch(text, search) {
-    content.length = 0;
+async function doSearch(text, search) {
+    if (text == null) return;
 
     let start = Date.now();
-    searchResult = boyerMoore(text, search);
+    searchResult = await(boyerMoore(text, search, visualization));
     let elapsed = Date.now() - start;
 
     console.log(searchResult.length + " instances of '" + search + "' found.")
@@ -65,12 +104,12 @@ function doSearch(text, search) {
     calculatePageDisplay(text, search);
 
     // do text highlighting
-    displayText(0);
+    displayText(pageData.curPage);
 }
 
-function calculatePageDisplay(text, search) {
+function calculatePageDisplay(text, search, highlight = true) {
     // append text overflow to next "page"
-    let overflow = textContainer.clientHeight < textContainer.scrollHeight;
+    content.length = 0;
 
     // TODO: update on screen size change (zoom/resize)
 
@@ -94,6 +133,8 @@ function calculatePageDisplay(text, search) {
     const maxChars = maxLines * maxCharsPerLine;
     pageData.charsPerPage = maxChars;
 
+    let overflow = text.length > maxChars;
+
     // console.log('Max Chars: ' + maxChars);
     // console.log('Text Length: ' + text.length);
 
@@ -106,10 +147,12 @@ function calculatePageDisplay(text, search) {
             let innerHTML = "";
             // get current "page" without overflow
             // do text highlighting
-            while (searchResult[i] < maxChars * (count + 1)) {
-                innerHTML += text.substring(pos, searchResult[i]) + "<span style='color:yellow'>" + search + '</span>';
-                pos = searchResult[i] + search.length;
-                i++;
+            if (highlight) {
+                while (searchResult[i] < maxChars * (count + 1)) {
+                    innerHTML += text.substring(pos, searchResult[i]) + "<mark>" + search + '</mark>';
+                    pos = searchResult[i] + search.length;
+                    i++;
+                }
             }
 
             innerHTML += text.substring(pos, maxChars * (count + 1));
@@ -120,41 +163,33 @@ function calculatePageDisplay(text, search) {
         }
     }
     else {
-        console.log('No overflow');
-        content.push(text);
+        let innerHTML = "";
+        let pos = 0;
+
+        if (highlight) {
+            for (let i = 0; i < searchResult.length; i++) {
+                innerHTML += text.substring(pos, searchResult[i]) + '<mark>' + search + '</mark>';
+                pos = searchResult[i] + search.length;
+            }
+        }
+
+        innerHTML += text.substring(pos)
+        content.push(innerHTML);
     }
 
     pageData.totalPages = content.length - 1;
 }
 
 function displayText(page) {
-    console.log('displaying page: ' + page);
 
     // don't go beyond contents of text
+    if (content.length == 0) return;
     if (page > pageData.totalPages) return;
     if (page < 0) return;
-
-    if (page > 0) {
-        prevButton.disabled = false;
-    }
-
-    if (page == pageData.totalPages) {
-        nextButtonButton.disabled = false;
-    }
 
     pageData.curPage = page;
     textContainer.innerHTML = content[page];
 }
-
-const editableDiv = document.querySelector('div[contenteditable="true"]');
-
-// solution from: https://stackoverflow.com/questions/6899659/remove-formatting-from-a-contenteditable-div
-editableDiv.addEventListener("paste", function(e) {
-  e.preventDefault();
-  var text = e.clipboardData.getData("text/plain");
-  document.execCommand("insertHTML", false, text);
-});
-
 
 // "tosearch.txt" will be split into (totalPages) strings (content[]), based on charsPerPage
 // then dynamically add (totalPages) buttons to pagination div
