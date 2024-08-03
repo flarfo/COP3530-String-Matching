@@ -3,13 +3,36 @@
 
 const NUM_CHARS = 256; // assuming ASCII, can be changed to 26 for alphabetic strings
 
+const visualizationActualText = document.getElementById('actual-text');
+const visualizationMatchText = document.getElementById('match-text');
+
 // string s, string pattern
 // TODO: add case matching
-export default function boyerMoore(s, pattern, matchCase = true) {
+export default async function boyerMoore(s, pattern, visualize = false, matchCase = true) {
 
     // PREPROCESSING
     const patternSize = pattern.length;
     
+    const length = visualizationActualText.cells.length;
+    if (visualize) {
+        for (let i = 0; i < length; i++) {
+            visualizationActualText.deleteCell(0);
+            visualizationMatchText.deleteCell(0);
+        }
+
+        for (let i = 0; i < patternSize; i++) {
+            const c = pattern.charAt(i);
+            visualizationActualText.insertCell(i).textContent = c;
+            visualizationMatchText.insertCell(i).textContent = '-';
+        }
+    }
+    else {
+        for (let i = 0; i < length; i++) {
+            visualizationActualText.deleteCell(0);
+            visualizationMatchText.deleteCell(0);
+        }
+    }
+
     /* 
     generate a bad-character table (t) to represent the amount our index can
     be shifted upon finding a given character (char). 
@@ -48,25 +71,43 @@ export default function boyerMoore(s, pattern, matchCase = true) {
     //let count = 0;
     // if pattern greather than source, pattern cannot exist in source
     while (i < s.length) {
+        if (visualize) {
+            await(sleep(1));
+            const start = i - patternSize + 1;
+            for (let c = 0; c < patternSize; c++) {
+                visualizationMatchText.cells[c].textContent = s.charAt(start + c);
+                visualizationMatchText.cells[c].style.backgroundColor = 'transparent';
+            }
+        }
+
         //if (count == 10000) break;
         let j = patternSize - 1;
         let pos = i;
         while (j >= 0) {
             //console.log("i: " + s.charAt(pos) + ", j: " + pattern.charAt(j))
+            if (visualize) {
+                await(sleep(1));
+            }
+            
             if (s.charAt(pos) == pattern.charAt(j)) {
                 //console.log("match"); 
+                if (visualize) {
+                    visualizationMatchText.cells[j].style.backgroundColor = 'green';
+                }
 
                 if (j == 0) {
                     result.push(pos);
-                    //console.log("added");
                     break;
                 }
-                
+
                 j -= 1;
                 pos -= 1;
                 continue;
             }
             //console.log("no match");
+            if (visualize) {
+                visualizationMatchText.cells[j].style.backgroundColor = 'red';
+            }
             break;
         }
 
@@ -79,4 +120,8 @@ export default function boyerMoore(s, pattern, matchCase = true) {
     }
     
     return result;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
