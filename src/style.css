@@ -4,7 +4,7 @@
   src: url('./fonts/FiraMono-Regular.otf');
 }
 
-.left-split {
+#left-split {
   height: 100%;
   width: 15%;
   position: fixed;
@@ -12,23 +12,24 @@
   left: 0;
   background-color: #181818;
   box-shadow: 0 0 5px #2b2b2b;
-  overflow-x: hidden;
-  z-index: 1;
+  overflow-x: scroll;
+  z-index: 2;
+}
+
+.vertical {
   display: flex;
-  justify-content: center;
-  list-style-type: none;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: flex-end;
 }
 
 input[type="file"] {
   display: none;
 }
 
-#input-form {
-  position: fixed;
-  bottom: 2%;
-}
-
-.custom-file-input {
+.custom-button {
+  font-family: 'FiraMono', monospace;
   border: none;
   padding: 6px 12px;
   cursor: pointer;
@@ -36,36 +37,62 @@ input[type="file"] {
   border-radius: 5px;
   box-shadow: 0 0 4px #2b2b2b;
   color: #ebece9;
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 5px;
 }
 
-.search-button {
+.custom-button:hover {
+  box-shadow: 0 0 3px #ebece9;
+}
+
+#time-display {
   border: none;
   padding: 6px 12px;
-  cursor: pointer;
-  text-align: center;
+  text-align: left;
   border-radius: 5px;
   box-shadow: 0 0 4px #2b2b2b;
-  background-color: transparent;
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 5px;
+  list-style: none;
+}
+
+#time-display * {
+  font-family: 'FiraMono', monospace;
   color: #ebece9;
 }
 
-.right-split {
-  height: 100%;
+#right-split {
+  height: 85%;
   width: 85%;
   position: fixed;
   top: 0;
   right: 0;
   background-color: #1f1f1f;
+  z-index: 1;
+}
+
+#bottom-split {
+  width: 85%;
+  height: 15%;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  background-color: #181818;
+  box-shadow: 0 0 5px #2b2b2b;
+  z-index: 0;
 }
 
 .page-container {
+  font-family: monospace;
   opacity: 0.75;
   user-select: none;
   overflow: hidden;
   position: fixed;
   z-index: 1;
   left: 50%;
-  bottom: 2%;
+  bottom: 16%;
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -81,14 +108,12 @@ input[type="file"] {
 }
 
 .page-container button {
+  font-family: 'FiraMono', monospace;
   background-color: transparent;
   border: none;
   cursor: pointer;
   z-index: 2;
-}
-
-.page-container button:disabled i {
-  color: #aaadc7;
+  color: white;
 }
 
 .pagination i:hover:not(.selected) {
@@ -99,6 +124,7 @@ input[type="file"] {
   color: #ebece9;
   padding: 6px 10px;
   border-radius: 5px;
+  font-style: normal;
 }
 
 .pagination i.selected {
@@ -110,7 +136,35 @@ input[type="file"] {
   color: #181818;
   background-color: #ebece9;
   padding: 20px 20px 0px 20px;
-  height: 100%;
   display: block;
+  height: 100%;
   word-break: break-word;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+#time-display {
+  font-family: 'FiraMono', monospace; font-size: 16px;
+  color: #181818;
+  display: block;
+}
+
+#visualization-toggle {
+  background-color: #f85149;
+}
+
+td {
+  box-shadow: 0 0 4px #2b2b2b;
+  color: #ebece9;
+  border-radius: 5px;
+  padding: 6px 10px;
+  margin: 1px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+}
+
+table {
+  margin: auto;
+  display: block;
 }
