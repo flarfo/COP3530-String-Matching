@@ -3,43 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>String Matching</title>
   </head>
   <body>
-    <div id="app"></div>
-    
-    <div class="left-split">
+    <div id="left-split" class="vertical">
+      <label id="time-display">
+        <li>Algorithm:</li>
+        <li>Time:</li>
+        <li>'x' Instances of 'y' found</li>
+      </label>
+      <label class="custom-button" id="search-button">Search</label>
+      <input id="search-input-field">
+      
+      <label class="custom-button" id="visualization-toggle">Visualize</label>
       <form id="input-form">
-        <li><label class="custom-file-input"><input type="file" id="input-file" accept=".txt">Upload</label></li>
-        <li><button id="search-button">Search</button></li>
-        <li><input id="search-input-field"></li>
+        <label class="custom-button"><input type="file" id="input-file" accept=".txt">Upload File</label>
       </form>
     </div>
 
-    <div class="right-split">
-      <div id="text-container" contenteditable="true"></div>
+    <div id="right-split">
+      <div id="text-container" spellcheck="false"></div>
       <div class="page-container">
-        <button id="first-page" disabled>
+        <button id="first-page">
           <strong>&lt;&lt;</strong>
         </button>
-        <button id="prev-page" disabled>
+        <button id="prev-page">
           <strong>&lt;</strong>
         </button>
         <div class="pagination">
           <button>
             <i class="selected">1</i>
-          </button>
-          <button>
-            <i>2</i>
-          </button>
-          <button>
-            <i>3</i>
-          </button>
-          <button>
-            <i>4</i>
-          </button>
-          <button>
-            <i>5</i>
           </button>
         </div>
         <button id="next-page">
@@ -49,6 +42,15 @@
           <strong>>></strong>
         </button>
       </div>
+    </div>
+
+    <div id="bottom-split" class="vertical">
+      <table>
+        <tr id="actual-text">
+        </tr>
+        <tr id="match-text">
+        </tr>
+      </table>
     </div>
   </body>
   <script type="module" src="src/index.js"></script>
