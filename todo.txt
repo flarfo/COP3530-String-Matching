@@ -1,8 +1,0 @@
-text file upload
-dynamic pagination
-navigation to found instances of a string
-string highlighting
-general website design
-selection for word to search, algorithm to use
-search time
-explanation of each algorithm
