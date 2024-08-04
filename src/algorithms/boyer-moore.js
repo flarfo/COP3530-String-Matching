@@ -72,7 +72,7 @@ export default async function boyerMoore(s, pattern, visualize = false, matchCas
     // if pattern greather than source, pattern cannot exist in source
     while (i < s.length) {
         if (visualize) {
-            await(sleep(1));
+            await(sleep(100));
             const start = i - patternSize + 1;
             for (let c = 0; c < patternSize; c++) {
                 visualizationMatchText.cells[c].textContent = s.charAt(start + c);
@@ -86,7 +86,7 @@ export default async function boyerMoore(s, pattern, visualize = false, matchCas
         while (j >= 0) {
             //console.log("i: " + s.charAt(pos) + ", j: " + pattern.charAt(j))
             if (visualize) {
-                await(sleep(1));
+                await(sleep(100));
             }
             
             if (s.charAt(pos) == pattern.charAt(j)) {
