@@ -114,21 +114,16 @@ input[type="file"] {
   cursor: pointer;
   z-index: 2;
   color: white;
-}
-
-.pagination i:hover:not(.selected) {
-  background-color: #2b2b2b;
-}
-
-.pagination i {
-  color: #ebece9;
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: 5px;
-  font-style: normal;
 }
 
-.pagination i.selected {
+.page-container button:hover {
   background-color: #2b2b2b;
+}
+
+.pagination strong {
+  color: #ebece9;
 }
 
 #text-container {
@@ -153,12 +148,20 @@ input[type="file"] {
   background-color: #f85149;
 }
 
+#boyer-toggle {
+  background-color: #438a55;
+}
+
+#aho-toggle {
+  background-color: #f85149;
+}
+
 td {
   box-shadow: 0 0 4px #2b2b2b;
   color: #ebece9;
   border-radius: 5px;
   padding: 6px 10px;
-  margin: 1px;
+  margin: 5px;
   width: 15px;
   height: 15px;
   text-align: center;
