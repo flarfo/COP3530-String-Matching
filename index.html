@@ -14,7 +14,8 @@
       </label>
       <label class="custom-button" id="search-button">Search</label>
       <input id="search-input-field">
-      
+      <label class="custom-button" id="boyer-toggle">Boyer-Moore</label>
+      <label class="custom-button" id="aho-toggle">Aho-Corasick</label>
       <label class="custom-button" id="visualization-toggle">Visualize</label>
       <form id="input-form">
         <label class="custom-button"><input type="file" id="input-file" accept=".txt">Upload File</label>
@@ -24,23 +25,29 @@
     <div id="right-split">
       <div id="text-container" spellcheck="false"></div>
       <div class="page-container">
-        <button id="first-page">
-          <strong>&lt;&lt;</strong>
-        </button>
-        <button id="prev-page">
-          <strong>&lt;</strong>
-        </button>
         <div class="pagination">
+          <button id="first-page">
+            <strong>&lt;&lt;</strong>
+          </button>
+          <button id="prev-page">
+            <strong>&lt;</strong>
+          </button>
           <button>
-            <i class="selected">1</i>
+            <strong id="prev-instance">...</strong>
+          </button>
+          <button>
+            <strong id="page-number">1</strong>
+          </button>
+          <button>
+            <strong id="next-instance">...</strong>
+          </button>
+          <button id="next-page">
+            <strong>></strong>
+          </button>
+          <button id="last-page">
+            <strong>>></strong>
           </button>
         </div>
-        <button id="next-page">
-          <strong>></strong>
-        </button>
-        <button id="last-page">
-          <strong>>></strong>
-        </button>
       </div>
     </div>
 
