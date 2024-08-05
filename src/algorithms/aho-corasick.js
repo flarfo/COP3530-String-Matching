@@ -98,7 +98,7 @@ class AhoCorasick {
             // If node has output patterns, add them to result
             if (node.output.length > 0) { 
                 for (let pattern of node.output) {
-                    results.push({pattern: pattern, index: i -pattern.length + 1});
+                    results.push({pattern: pattern, index: i - pattern.length + 1});
                 }
             }
         }
