@@ -4,6 +4,7 @@ import AhoCorasick from './algorithms/aho-corasick.js';
 
 sessionStorage.clear(); 
 
+// store relevant page data for displaying text contents
 const pageData = {
     curMatch: 0,
     searchPattern: '',
@@ -12,20 +13,30 @@ const pageData = {
     charsPerPage: 8000
 };
 
+// algorithm time taken
 const timeText = document.getElementById('time-display');
+// search pattern + number of instances text
 const searchPatternText = document.getElementById('search-pattern');
 
+// store all loaded text data into a page in content[]
 const content = [];
+
+// {pattern, index} of all matching string searchs
 let searchResult = [];
+
+// complete text loaded from file
 let searchText;
 
 let algorithm = false; // false = boyer, true = aho
 const boyerToggle = document.getElementById('boyer-toggle');
 boyerToggle.addEventListener('click', e => {
     e.preventDefault();
+
+    // swap algorithms on click
     algorithm = !algorithm;
     if (algorithm) {
         for (let i = searchList.children.length - 1; i > 0; i--) {
+            // enable aho-corasick additional text inputs
             searchList.children[i].disabled = false;
         }
 
@@ -34,6 +45,7 @@ boyerToggle.addEventListener('click', e => {
     }
     else {
         for (let i = searchList.children.length - 1; i > 0; i--) {
+            // disable aho-corasick additional text inputs
             searchList.children[i].disabled = true;
         }
 
@@ -45,9 +57,12 @@ boyerToggle.addEventListener('click', e => {
 const ahoToggle = document.getElementById('aho-toggle');
 ahoToggle.addEventListener('click', e => {
     e.preventDefault();
+
+    // swap algorithms on click
     algorithm = !algorithm;
     if (algorithm) {
         for (let i = searchList.children.length - 1; i > 0; i--) {
+            // enable aho-corasick additional text inputs
             searchList.children[i].disabled = false;
         }
 
@@ -56,6 +71,7 @@ ahoToggle.addEventListener('click', e => {
     }
     else {
         for (let i = searchList.children.length - 1; i > 0; i--) {
+            // disable aho-corasick additional text inputs
             searchList.children[i].disabled = true;
         }
 
@@ -64,10 +80,12 @@ ahoToggle.addEventListener('click', e => {
     }
 });
 
-let visualization = false;
+let visualization = false; // currently only works for boyer-moore algorithm
 const visualizationToggle = document.getElementById('visualization-toggle');
 visualizationToggle.addEventListener('click', e => {
     e.preventDefault();
+    
+    // toggle visualization on click 
     visualization = !visualization;
     if (visualization) {
         visualizationToggle.style.backgroundColor = '#438a55';
@@ -81,10 +99,12 @@ const searchList = document.getElementById('search-list');
 document.getElementById('increase-aho').addEventListener('click', e => {
     e.preventDefault();
 
+    // increase number of additional text inputs on click
     const element = document.createElement('input');
     element.setAttribute('class', 'search-input-field');
 
     if (!algorithm) {
+        // if aho-corasick not selected, disable text input
         element.setAttribute('disabled', 'true');
     }
     
@@ -94,6 +114,7 @@ document.getElementById('increase-aho').addEventListener('click', e => {
 document.getElementById('decrease-aho').addEventListener('click', e => {
     e.preventDefault();
 
+    // reduce number of additional text inputs on click
     if (searchList.childNodes.length > 1) {
         searchList.removeChild(searchList.childNodes[searchList.childNodes.length - 1]);
     }
@@ -106,6 +127,7 @@ searchButton.addEventListener('click', e => {
     const patterns = [];
 
     const sortedSearchList = [];
+    // sort patterns to identify overlap
     for (let i = 0; i < searchList.children.length; i++) {
         if (searchList.children[i].value == '') continue;
         sortedSearchList.push(searchList.children[i].value);
@@ -117,6 +139,8 @@ searchButton.addEventListener('click', e => {
         for (let i = 0; i < sortedSearchList.length; i++) {
             let add = true;
             for (let j = 0; j < patterns.length; j++) {
+                // prevent overlapping patterns (for example, [51, 5] : 51 contains 5)
+                // overlap does not work with pattern highlighting and I do not have time to fix
                 if (patterns[j].includes(sortedSearchList[i])) {
                     add = false;
                     break;
@@ -142,39 +166,43 @@ const pageNumberDisplay = document.getElementById('page-number');
 
 const prevInstanceButton = document.getElementById('prev-instance');
 prevInstanceButton.addEventListener('click', e => {
+    e.preventDefault();
+    // go to previous found match on click (left ... button)
     goToPrevPageOfInstance();
 });
 
 const nextInstanceButton = document.getElementById('next-instance');
 nextInstanceButton.addEventListener('click', e => {
+    e.preventDefault();
+    // go to next found match on click (right ... button)
     goToNextPageOfInstance();
 });
 
 const firstButton = document.getElementById('first-page');
 firstButton.addEventListener('click', e => {
     e.preventDefault();
-
+    // go to first page on click (<< button)
     displayText(0);
 })
 
 const prevButton = document.getElementById('prev-page');
 prevButton.addEventListener('click', e => {
     e.preventDefault();
-
+    // go to previous page on click (< button)
     displayText(pageData.curPage - 1);
 });
 
 const nextButton = document.getElementById('next-page');
 nextButton.addEventListener('click', e => {
     e.preventDefault();
-
+    // go to next page on click (> button)
     displayText(pageData.curPage + 1);
 });
 
 const lastButton = document.getElementById('last-page');
 lastButton.addEventListener('click', e => {
     e.preventDefault();
-
+    // go to last page on click (>> button)
     displayText(pageData.totalPages);
 })
 
@@ -182,17 +210,12 @@ const textContainer = document.getElementById('text-container');
 const inputFile = document.getElementById('input-file');
 const inputForm = document.getElementById('input-form');
 
-// TODO: actually calculate width, especially if a fallback font is needed
-const fontWidth = 10;
-
 const fileReader = new FileReader();
 inputForm.addEventListener('change', e => {
     e.preventDefault();
 
     // read text from uploaded file
-    
     fileReader.onload = () => {
-        //content.length = 0;
         pageData.curMatch = 0;
 
         let text = fileReader.result;
@@ -211,17 +234,18 @@ async function doSearch(text, patterns) {
     pageData.curMatch = 0;
 
     if (algorithm) {
+        // do Aho-Corasick
         const ac = new AhoCorasick();
-        // Add patterns to the Trie
+        // add patterns to the Trie
         let start = Date.now();
         for (let pattern of patterns) {
             ac.addPattern(pattern);
         }
 
-        // Build failure links
+        // build failure links
         ac.buildFailureLinks();
 
-        // Search for patterns in the text
+        // search for patterns in the text
         searchResult = ac.search(text);
 
         let elapsed = Date.now() - start;
@@ -229,7 +253,9 @@ async function doSearch(text, patterns) {
         timeText.textContent = 'Time: ' + elapsed + 'ms';
     }
     else {
+        // do Boyer-Moore
         let start = Date.now();
+        // await for visualization
         searchResult = await(boyerMoore(text, patterns[0], visualization));
         let elapsed = Date.now() - start;
 
@@ -245,6 +271,7 @@ async function doSearch(text, patterns) {
         patternMap.get(result.pattern).val++;
     }
 
+    // display each pattern with respective number of instances
     let patternText = '';
     for (let pattern of patterns) { 
         patternText += '<strong>' + patternMap.get(pattern).val + "</strong> Instances of '<strong>" + pattern + "</strong>'<br>"; 
@@ -261,33 +288,7 @@ async function doSearch(text, patterns) {
 function calculatePageDisplay(text, highlight = true) {
     // append text overflow to next "page"
     content.length = 0;
-
-    // TODO: update on screen size change (zoom/resize)
-
-    // update content division based on text overflow amount
-    
-    // calculate max lines possible to display in text div based on current zoom
-    // divide height of div by line height, (* window.devicePixelRatio to account for zoom)
-
-    //const maxLines = Math.floor(window.devicePixelRatio * (textContainer.clientHeight - 20) / (Number.parseFloat(window.getComputedStyle(textContainer).fontSize) * 1.2 * window.devicePixelRatio));
-
-    // number of lines not displayed due to too much text
-    // const overflowAmount = Math.floor(window.devicePixelRatio * (textContainer.scrollHeight - 20) / (Number.parseFloat(window.getComputedStyle(textContainer).fontSize) * 1.2 * window.devicePixelRatio)) - maxLines;
-
-    // console.log('Overflow Amount: ' + overflowAmount);
-    // console.log('Max Lines: '  + maxLines);
-
-    // console.log('Div Width: ' + textContainer.clientWidth * window.devicePixelRatio);
-    //const maxCharsPerLine = Math.floor(textContainer.clientWidth / fontWidth);
-    // console.log('Max Chars Per Line: ' + maxCharsPerLine);
-
-    //const maxChars = maxLines * maxCharsPerLine;
-    //pageData.charsPerPage = maxChars;
-
     let overflow = text.length > pageData.charsPerPage;
-
-    // console.log('Max Chars: ' + maxChars);
-    // console.log('Text Length: ' + text.length);
 
     if (overflow) {
         let count = 0;
@@ -348,13 +349,13 @@ function goToPrevPageOfInstance() {
 
     let page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
 
+    // find first page that is less than current page with a match
     for (let i = searchResult.length - 1; i >= 0; i--) {
         pageData.curMatch = i;
         if (Math.floor(searchResult[i].index / pageData.charsPerPage) < pageData.curPage) break;
     }
 
     page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
-    
     displayText(page);
 }
 
@@ -364,12 +365,12 @@ function goToNextPageOfInstance() {
 
     let page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
     
+    // find first page that is greater than current page with a match
     for (let i = pageData.curMatch; i < searchResult.length - 1; i++) {
         if (Math.floor(searchResult[i].index / pageData.charsPerPage) > pageData.curPage) break;
         pageData.curMatch++;
     }
 
     page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
-
     displayText(page);
 }
