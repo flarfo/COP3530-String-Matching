@@ -67,7 +67,6 @@ export default async function boyerMoore(s, pattern, visualize = false) {
 
     let i = patternSize - 1;
 
-    //let count = 0;
     // if pattern greather than source, pattern cannot exist in source
     while (i < s.length) {
         if (visualize) {
