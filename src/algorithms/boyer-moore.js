@@ -7,8 +7,7 @@ const visualizationActualText = document.getElementById('actual-text');
 const visualizationMatchText = document.getElementById('match-text');
 
 // string s, string pattern
-// TODO: add case matching
-export default async function boyerMoore(s, pattern, visualize = false, matchCase = true) {
+export default async function boyerMoore(s, pattern, visualize = false) {
 
     // PREPROCESSING
     const patternSize = pattern.length;
@@ -96,7 +95,7 @@ export default async function boyerMoore(s, pattern, visualize = false, matchCas
                 }
 
                 if (j == 0) {
-                    result.push(pos);
+                    result.push({pattern: pattern, index: pos});
                     break;
                 }
 
@@ -112,11 +111,6 @@ export default async function boyerMoore(s, pattern, visualize = false, matchCas
         }
 
         i += Math.max(badCharTable[s.charCodeAt(i)], shiftTable[j]);
-        
-        //console.log(shift + " bad: " + badCharTable[s.charCodeAt(i)] + ", shift: " + shiftTable[j]);
-        //console.log("j = " + j);
-        //console.log("i: " + i);
-        //count++;
     }
     
     return result;
