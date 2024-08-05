@@ -4,6 +4,8 @@ This project implements two common string-searching algorithms, the Boyer-Moore 
 ## Online Testing
 The project is deployed online using Vite + GitHub Pages here: https://flarfo.github.io/COP3530-String-Matching/
 
+Here are some example texts that can be used for searching: https://github.com/amephraim/nlp/tree/master/texts
+
 ## Local Deployment
 To run the code on a local machine, Node.js is required.
 
