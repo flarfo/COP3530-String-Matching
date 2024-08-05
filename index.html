@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>String Matching</title>
+    <script type="module" crossorigin src="/COP3530-String-Matching/assets/index-Cfx-aFhn.js"></script>
+    <link rel="stylesheet" crossorigin href="/COP3530-String-Matching/assets/index-Dlzi2aAN.css">
+  </head>
+  <body>
+    <div id="left-split" class="vertical">
+      <div style="width: 90%; overflow-y: auto; overflow-x: hidden; padding: 5px 5px; margin-bottom: 20px;">
+        <label id="time-container">
+          <li id="time-display">Time: </li>
+          <li id="search-pattern"></li>
+        </label>
+        <label class="custom-button" id="search-button"  style="margin-top: 30px;">Search</label>
+        <li id="search-list">
+          <input class="search-input-field">
+        </li>
+        <label class="custom-button" id="boyer-toggle" style="margin: 30px 0px;">Boyer-Moore</label>
+        <div>
+          <label class="custom-button" id="aho-toggle">Aho-Corasick</label>
+          <label class="custom-button" id="increase-aho">+</label>
+          <label class="custom-button" id="decrease-aho">-</label>
+        </div>
+        <label class="custom-button" id="visualization-toggle" style="margin: 30px 0px;">Visualize</label>
+        <form id="input-form">
+          <label class="custom-button"><input type="file" id="input-file" accept=".txt">Upload File</label>
+        </form>
+      </div>
+    </div>
+
+    <div id="right-split">
+      <div id="text-container" spellcheck="false"></div>
+      <div class="page-container">
+        <div class="pagination">
+          <button id="first-page">
+            <strong>&lt;&lt;</strong>
+          </button>
+          <button id="prev-page">
+            <strong>&lt;</strong>
+          </button>
+          <button id="prev-instance">
+            <strong>...</strong>
+          </button>
+          <strong id="page-number">1</strong>
+          <button id="next-instance">
+            <strong>...</strong>
+          </button>
+          <button id="next-page">
+            <strong>></strong>
+          </button>
+          <button id="last-page">
+            <strong>>></strong>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="bottom-split" class="vertical">
+      <div>
+        <table>
+          <tr id="actual-text">
+          </tr>
+          <tr id="match-text">
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
