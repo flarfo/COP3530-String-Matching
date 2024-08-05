@@ -2,7 +2,7 @@
 This project implements two common string-searching algorithms, the Boyer-Moore and Aho-Corasick algorithms. View the project explanation and analysis here: 'video-link'
 
 ## Online Testing
-The project is deployed online using vercel here: 'vercel-link'
+The project is deployed online using Vite + GitHub Pages here: https://flarfo.github.io/COP3530-String-Matching/
 
 ## Local Deployment
 To run the code on a local machine, Node.js is required.
