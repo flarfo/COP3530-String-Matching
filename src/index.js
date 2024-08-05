@@ -1,7 +1,6 @@
 import './style.css'
 import boyerMoore from './algorithms/boyer-moore.js'
 import AhoCorasick from './algorithms/aho-corasick.js';
-import naive from './algorithms/naive.js';
 
 sessionStorage.clear(); 
 
@@ -9,9 +8,12 @@ const pageData = {
     curMatch: 0,
     searchPattern: '',
     curPage: 0, // 0 indexed
-    totalPages: 0, // 0 indexed
+    totalPages: -1, // 0 indexed
     charsPerPage: 8000
 };
+
+const timeText = document.getElementById('time-display');
+const searchPatternText = document.getElementById('search-pattern');
 
 const content = [];
 let searchResult = [];
@@ -23,10 +25,18 @@ boyerToggle.addEventListener('click', e => {
     e.preventDefault();
     algorithm = !algorithm;
     if (algorithm) {
+        for (let i = searchList.children.length - 1; i > 0; i--) {
+            searchList.children[i].disabled = false;
+        }
+
         boyerToggle.style.backgroundColor = '#f85149';
         ahoToggle.style.backgroundColor = '#438a55';
     }
     else {
+        for (let i = searchList.children.length - 1; i > 0; i--) {
+            searchList.children[i].disabled = true;
+        }
+
          boyerToggle.style.backgroundColor = '#438a55';
          ahoToggle.style.backgroundColor = '#f85149';
     }
@@ -37,10 +47,18 @@ ahoToggle.addEventListener('click', e => {
     e.preventDefault();
     algorithm = !algorithm;
     if (algorithm) {
+        for (let i = searchList.children.length - 1; i > 0; i--) {
+            searchList.children[i].disabled = false;
+        }
+
         ahoToggle.style.backgroundColor = '#438a55';
         boyerToggle.style.backgroundColor = '#f85149';
     }
     else {
+        for (let i = searchList.children.length - 1; i > 0; i--) {
+            searchList.children[i].disabled = true;
+        }
+
         ahoToggle.style.backgroundColor = '#f85149';
         boyerToggle.style.backgroundColor = '#438a55';
     }
@@ -59,14 +77,65 @@ visualizationToggle.addEventListener('click', e => {
     }
 });
 
+const searchList = document.getElementById('search-list');
+document.getElementById('increase-aho').addEventListener('click', e => {
+    e.preventDefault();
+
+    const element = document.createElement('input');
+    element.setAttribute('class', 'search-input-field');
+
+    if (!algorithm) {
+        element.setAttribute('disabled', 'true');
+    }
+    
+    searchList.appendChild(element);
+});
+
+document.getElementById('decrease-aho').addEventListener('click', e => {
+    e.preventDefault();
+
+    if (searchList.childNodes.length > 1) {
+        searchList.removeChild(searchList.childNodes[searchList.childNodes.length - 1]);
+    }
+});
+
 const searchButton = document.getElementById('search-button');
-const searchInputField = document.getElementById('search-input-field');
 searchButton.addEventListener('click', e => {
     e.preventDefault();
 
-    if (searchInputField.value == '') return;
-    pageData.searchPattern = searchInputField.value;
-    doSearch(searchText, searchInputField.value);
+    const patterns = [];
+
+    const sortedSearchList = [];
+    for (let i = 0; i < searchList.children.length; i++) {
+        if (searchList.children[i].value == '') continue;
+        sortedSearchList.push(searchList.children[i].value);
+    }
+
+    sortedSearchList.sort((a, b) => b.length - a.length);
+
+    if (algorithm) {
+        for (let i = 0; i < sortedSearchList.length; i++) {
+            let add = true;
+            for (let j = 0; j < patterns.length; j++) {
+                if (patterns[j].includes(sortedSearchList[i])) {
+                    add = false;
+                    break;
+                }
+            }
+
+            if (add) {
+                patterns.push(sortedSearchList[i]);
+            }
+        }
+    }
+    else if (searchList.children[0].value != '')
+    {
+        patterns.push(searchList.children[0].value);
+    }
+
+    if (patterns.length == 0) return;
+
+    doSearch(searchText, patterns);
 });
 
 const pageNumberDisplay = document.getElementById('page-number');
@@ -136,7 +205,7 @@ inputForm.addEventListener('change', e => {
     fileReader.readAsText(inputFile.files[0]);
 });
 
-async function doSearch(text, search) {
+async function doSearch(text, patterns) {
     if (text == null) return;
 
     pageData.curMatch = 0;
@@ -144,42 +213,52 @@ async function doSearch(text, search) {
     if (algorithm) {
         const ac = new AhoCorasick();
         // Add patterns to the Trie
-        ac.addPattern(search);
+        let start = Date.now();
+        for (let pattern of patterns) {
+            ac.addPattern(pattern);
+        }
 
         // Build failure links
         ac.buildFailureLinks();
 
         // Search for patterns in the text
-        searchResult.length = 0;
-       
-        let start = Date.now();
-
-        for (let result of ac.search(text)) {
-            searchResult.push(result.index);
-        }
+        searchResult = ac.search(text);
 
         let elapsed = Date.now() - start;
 
-        console.log(searchResult.length + " instances of '" + search + "' found.")
-        console.log("Aho-Corasick (ms): " + elapsed);
-        
+        timeText.textContent = 'Time: ' + elapsed + 'ms';
     }
     else {
         let start = Date.now();
-        searchResult = await(boyerMoore(text, search, visualization));
+        searchResult = await(boyerMoore(text, patterns[0], visualization));
         let elapsed = Date.now() - start;
 
-        console.log(searchResult.length + " instances of '" + search + "' found.")
-        console.log("Boyer-Moore (ms): " + elapsed);
+        timeText.textContent = 'Time: ' + elapsed + 'ms';
     }
 
-    calculatePageDisplay(text, search);
+    const patternMap = new Map();
+    for (let pattern of patterns) { 
+        patternMap.set(pattern, {val: 0});
+    }
+
+    for (let result of searchResult) {
+        patternMap.get(result.pattern).val++;
+    }
+
+    let patternText = '';
+    for (let pattern of patterns) { 
+        patternText += '<strong>' + patternMap.get(pattern).val + "</strong> Instances of '<strong>" + pattern + "</strong>'<br>"; 
+    }
+
+    searchPatternText.innerHTML = patternText;
 
     // do text highlighting
+    calculatePageDisplay(text);
+
     displayText(pageData.curPage);
 }
 
-function calculatePageDisplay(text, search, highlight = true) {
+function calculatePageDisplay(text, highlight = true) {
     // append text overflow to next "page"
     content.length = 0;
 
@@ -214,15 +293,15 @@ function calculatePageDisplay(text, search, highlight = true) {
         let count = 0;
         let pos = 0;
         let i = 0;
-        // TODO: may need to fix for final page ?
+        
         while (pageData.charsPerPage * count < text.length) {
             let innerHTML = "";
             // get current "page" without overflow
             // do text highlighting
             if (highlight) {
-                while (searchResult[i] < pageData.charsPerPage * (count + 1)) {
-                    innerHTML += text.substring(pos, searchResult[i]) + "<mark>" + search + '</mark>';
-                    pos = searchResult[i] + search.length;
+                while (i < searchResult.length && searchResult[i].index < pageData.charsPerPage * (count + 1)) {
+                    innerHTML += text.substring(pos, searchResult[i].index) + "<mark>" + searchResult[i].pattern + '</mark>';
+                    pos = searchResult[i].index + searchResult[i].pattern.length;
                     i++;
                 }
             }
@@ -240,8 +319,8 @@ function calculatePageDisplay(text, search, highlight = true) {
 
         if (highlight) {
             for (let i = 0; i < searchResult.length; i++) {
-                innerHTML += text.substring(pos, searchResult[i]) + '<mark>' + search + '</mark>';
-                pos = searchResult[i] + search.length;
+                innerHTML += text.substring(pos, searchResult[i].index) + '<mark>' + searchResult[i].pattern + '</mark>';
+                pos = searchResult[i].index + searchResult[i].pattern.length;
             }
         }
 
@@ -264,38 +343,33 @@ function displayText(page) {
 }
 
 function goToPrevPageOfInstance() {
-    if (pageData.curPage * pageData.charsPerPage < searchResult[0]) return;
+    if (pageData.totalPages == -1) return;
+    if (pageData.curPage * pageData.charsPerPage < searchResult[0].index) return;
 
-    let page = Math.floor(searchResult[pageData.curMatch] / pageData.charsPerPage);
+    let page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
 
-    for (let i = searchResult.length; i >= 0; i--) {
+    for (let i = searchResult.length - 1; i >= 0; i--) {
         pageData.curMatch = i;
-        if (Math.floor(searchResult[i] / pageData.charsPerPage) < pageData.curPage) break;
+        if (Math.floor(searchResult[i].index / pageData.charsPerPage) < pageData.curPage) break;
     }
 
-    page = Math.floor(searchResult[pageData.curMatch] / pageData.charsPerPage);
+    page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
     
     displayText(page);
 }
 
 function goToNextPageOfInstance() {
+    if (pageData.totalPages == -1) return;
     if (pageData.curMatch >= searchResult.length) return;
 
-    let page = Math.floor(searchResult[pageData.curMatch] / pageData.charsPerPage);
+    let page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
     
     for (let i = pageData.curMatch; i < searchResult.length - 1; i++) {
-        if (Math.floor(searchResult[i] / pageData.charsPerPage) > pageData.curPage) break;
+        if (Math.floor(searchResult[i].index / pageData.charsPerPage) > pageData.curPage) break;
         pageData.curMatch++;
     }
 
-    page = Math.floor(searchResult[pageData.curMatch] / pageData.charsPerPage);
+    page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
 
     displayText(page);
-    console.log(page);
 }
-
-// "tosearch.txt" will be split into (totalPages) strings (content[]), based on charsPerPage
-// then dynamically add (totalPages) buttons to pagination div
-// the button number will be the index in (content[])
-// so the "1" button will be (content[0])
-// then display the text from (curPage)
