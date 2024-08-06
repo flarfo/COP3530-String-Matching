@@ -1,4 +1,4 @@
-# COP3530 Project 3 - String Matching
+# COP3530 Project 3 - String Searching
 This project implements two common string-searching algorithms, the Boyer-Moore and Aho-Corasick algorithms. View the project explanation and analysis here: 'video-link'
 
 ## Online Testing
