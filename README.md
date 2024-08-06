@@ -2,7 +2,7 @@
 This project implements two common string-searching algorithms, the Boyer-Moore and Aho-Corasick algorithms. View the project explanation and analysis here: 'video-link'
 
 ## Online Testing
-The project is deployed online using Vite + GitHub Pages here: https://flarfo.github.io/COP3530-String-Matching/
+An online demo is available at https://flarfo.github.io/COP3530-String-Matching/
 
 Here are some example texts that can be used for searching: https://github.com/amephraim/nlp/tree/master/texts
 
