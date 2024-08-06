@@ -345,6 +345,7 @@ function displayText(page) {
 
 function goToPrevPageOfInstance() {
     if (pageData.totalPages == -1) return;
+    if (searchResult.length == 0) return;
     if (pageData.curPage * pageData.charsPerPage < searchResult[0].index) return;
 
     let page = Math.floor(searchResult[pageData.curMatch].index / pageData.charsPerPage);
