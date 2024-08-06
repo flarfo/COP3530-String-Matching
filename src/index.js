@@ -258,7 +258,6 @@ async function doSearch(text, patterns) {
         // await for visualization
         searchResult = await(boyerSearch(text, patterns[0], visualization));
         let elapsed = Date.now() - start;
-        console.log(searchResult);
         timeText.textContent = 'Time: ' + elapsed + 'ms';
     }
 
