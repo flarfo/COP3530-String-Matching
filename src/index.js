@@ -1,5 +1,5 @@
 import './style.css'
-import boyerMoore from './algorithms/boyer-moore.js'
+import boyerSearch from './algorithms/boyer-moore.js'
 import AhoCorasick from './algorithms/aho-corasick.js';
 
 sessionStorage.clear(); 
@@ -256,9 +256,9 @@ async function doSearch(text, patterns) {
         // do Boyer-Moore
         let start = Date.now();
         // await for visualization
-        searchResult = await(boyerMoore(text, patterns[0], visualization));
+        searchResult = await(boyerSearch(text, patterns[0], visualization));
         let elapsed = Date.now() - start;
-
+        console.log(searchResult);
         timeText.textContent = 'Time: ' + elapsed + 'ms';
     }
 

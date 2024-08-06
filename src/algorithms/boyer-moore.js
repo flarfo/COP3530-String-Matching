@@ -3,11 +3,26 @@
 
 const NUM_CHARS = 256; // assuming ASCII, can be changed to 26 for alphabetic strings
 
+var endPromise = false;
+var searching = false;
+
 const visualizationActualText = document.getElementById('actual-text');
 const visualizationMatchText = document.getElementById('match-text');
 
+export default async function boyerSearch(s, pattern, visualize = false) {
+    if (searching) {
+        // end visualization if currently visualizing
+        endPromise = true;
+        // NOTE: this adds an additional await(200) to the time
+        await(sleep(200));
+    }
+    
+    return await(boyerMoore(s, pattern, visualize));
+}
+
 // string s, string pattern
-export default async function boyerMoore(s, pattern, visualize = false) {
+async function boyerMoore(s, pattern, visualize = false) {
+    searching = true;
 
     // PREPROCESSING
     const patternSize = pattern.length;
@@ -56,7 +71,6 @@ export default async function boyerMoore(s, pattern, visualize = false) {
     const shiftTable = [];
 
     for (let i = 0; i < patternSize; i++) {
-        //console.log(pattern.charAt(i) + ": " + Math.max(1, patternSize - i - 1));
         shiftTable[i] = Math.max(1, patternSize - i - 1);
     }
 
@@ -69,7 +83,14 @@ export default async function boyerMoore(s, pattern, visualize = false) {
 
     // if pattern greather than source, pattern cannot exist in source
     while (i < s.length) {
-        if (visualize) {
+        if (visualize) { 
+            if (endPromise) {
+                // end visualization if another started
+                endPromise = false;
+                console.log(pattern);
+                return result;
+            }
+
             await(sleep(100));
             const start = i - patternSize + 1;
             for (let c = 0; c < patternSize; c++) {
@@ -78,17 +99,15 @@ export default async function boyerMoore(s, pattern, visualize = false) {
             }
         }
 
-        //if (count == 10000) break;
         let j = patternSize - 1;
         let pos = i;
         while (j >= 0) {
-            //console.log("i: " + s.charAt(pos) + ", j: " + pattern.charAt(j))
             if (visualize) {
                 await(sleep(100));
             }
             
+            // match
             if (s.charAt(pos) == pattern.charAt(j)) {
-                //console.log("match"); 
                 if (visualize) {
                     visualizationMatchText.cells[j].style.backgroundColor = 'green';
                 }
@@ -102,7 +121,8 @@ export default async function boyerMoore(s, pattern, visualize = false) {
                 pos -= 1;
                 continue;
             }
-            //console.log("no match");
+
+            // no match
             if (visualize) {
                 visualizationMatchText.cells[j].style.backgroundColor = 'red';
             }
@@ -112,6 +132,7 @@ export default async function boyerMoore(s, pattern, visualize = false) {
         i += Math.max(badCharTable[s.charCodeAt(i)], shiftTable[j]);
     }
     
+    searching = false;
     return result;
 }
 
